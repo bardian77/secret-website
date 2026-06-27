@@ -9,6 +9,8 @@ const PHOTOS = [
 
 const INTRO_TEXT = "Hey SP, I have a question…";
 
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 // ====== SCREEN HELPERS ======
 const screens = {
   intro: document.getElementById("screen-intro"),
@@ -16,9 +18,46 @@ const screens = {
   celebrate: document.getElementById("screen-celebrate"),
 };
 
+// Fluid hand-off: current screen lifts away, next eases in.
 function showScreen(name) {
-  Object.values(screens).forEach((s) => s.classList.remove("is-active"));
-  screens[name].classList.add("is-active");
+  Object.entries(screens).forEach(([key, el]) => {
+    if (key === name) return;
+    if (el.classList.contains("is-active")) {
+      el.classList.remove("is-active");
+      el.classList.add("is-leaving");
+      setTimeout(() => el.classList.remove("is-leaving"), 700);
+    }
+  });
+  // Next frame so the browser registers the starting transform before animating.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => screens[name].classList.add("is-active"));
+  });
+}
+
+// ====== Tactile press + ripple on every button ======
+function attachPressFX(btn, { ripple = true } = {}) {
+  const press = () => btn.classList.add("is-pressed");
+  const release = () => btn.classList.remove("is-pressed");
+
+  btn.addEventListener("pointerdown", (e) => {
+    press();
+    if (ripple && !reduceMotion) spawnRipple(btn, e);
+  });
+  btn.addEventListener("pointerup", release);
+  btn.addEventListener("pointerleave", release);
+  btn.addEventListener("pointercancel", release);
+}
+
+function spawnRipple(btn, e) {
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height) * 2.2;
+  const r = document.createElement("span");
+  r.className = "ripple";
+  r.style.width = r.style.height = size + "px";
+  r.style.left = (e.clientX - rect.left) + "px";
+  r.style.top = (e.clientY - rect.top) + "px";
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 600);
 }
 
 // ====== SCREEN 1: typewriter ======
@@ -26,17 +65,22 @@ const typedEl = document.getElementById("typed");
 const continueBtn = document.getElementById("continue-btn");
 
 function typeWriter(text, el, speed = 75) {
+  if (reduceMotion) {
+    el.textContent = text;
+    continueBtn.classList.add("show");
+    return;
+  }
   let i = 0;
   (function step() {
     if (i <= text.length) {
       el.textContent = text.slice(0, i);
       i++;
-      // Slight natural pause on the comma and ellipsis.
       const ch = text[i - 2];
-      const delay = ch === "," ? speed * 5 : ch === "…" ? speed * 4 : speed;
+      // Natural pauses on the comma and the trailing ellipsis.
+      const delay = ch === "," ? speed * 5 : ch === "…" ? speed * 5 : speed;
       setTimeout(step, delay);
     } else {
-      continueBtn.classList.remove("continue-hidden");
+      setTimeout(() => continueBtn.classList.add("show"), 450);
     }
   })();
 }
@@ -47,11 +91,11 @@ continueBtn.addEventListener("click", () => showScreen("question"));
 const yesBtn = document.getElementById("yes-btn");
 const noBtn = document.getElementById("no-btn");
 
+let dodgeCount = 0;
 function dodge() {
-  // Detach the button so it can roam anywhere on screen.
   noBtn.classList.add("runaway");
 
-  const pad = 12;
+  const pad = 14;
   const w = noBtn.offsetWidth;
   const h = noBtn.offsetHeight;
   const maxX = Math.max(pad, window.innerWidth - w - pad);
@@ -60,25 +104,48 @@ function dodge() {
   const x = Math.random() * (maxX - pad) + pad;
   const y = Math.random() * (maxY - pad) + pad;
 
+  // Each escape it shrinks a touch and tilts — playful, never disappears.
+  dodgeCount++;
+  const scale = Math.max(0.55, 1 - dodgeCount * 0.05);
+  const tilt = (Math.random() * 26 - 13).toFixed(1);
+
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
-
-  // A cheeky little wobble each time it escapes.
-  noBtn.style.transform = `rotate(${(Math.random() * 30 - 15).toFixed(1)}deg)`;
+  noBtn.style.transform = `rotate(${tilt}deg) scale(${scale})`;
 }
 
-// Move on click/tap, and also when a cursor gets near (desktop teasing).
-noBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-  dodge();
-});
+attachPressFX(noBtn, { ripple: false });
+noBtn.addEventListener("click", (e) => { e.preventDefault(); dodge(); });
 noBtn.addEventListener("mouseenter", dodge);
 
-yesBtn.addEventListener("click", () => {
-  showScreen("celebrate");
-  buildGallery();
-  startHearts();
+attachPressFX(yesBtn);
+yesBtn.addEventListener("click", (e) => {
+  if (!reduceMotion) burstHearts(e.clientX, e.clientY);
+  // Let the burst + press read for a beat, then glide to celebration.
+  setTimeout(() => {
+    showScreen("celebrate");
+    buildGallery();
+    startHearts();
+  }, reduceMotion ? 0 : 280);
 });
+
+// A quick pop of hearts radiating from the Yes button.
+function burstHearts(cx, cy) {
+  const chars = ["💖", "💕", "✨", "💗", "🩷"];
+  for (let i = 0; i < 14; i++) {
+    const b = document.createElement("span");
+    b.className = "burst";
+    b.textContent = chars[i % chars.length];
+    const angle = (Math.PI * 2 * i) / 14;
+    const dist = 60 + Math.random() * 70;
+    b.style.left = cx + "px";
+    b.style.top = cy + "px";
+    b.style.setProperty("--bx", Math.cos(angle) * dist + "px");
+    b.style.setProperty("--by", Math.sin(angle) * dist + "px");
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 900);
+  }
+}
 
 // ====== SCREEN 3: gallery + hearts ======
 function buildGallery() {
@@ -86,15 +153,18 @@ function buildGallery() {
   if (gallery.dataset.built) return;
   gallery.dataset.built = "true";
 
-  PHOTOS.forEach((src, idx) => {
+  const list = window.__DEMO_PHOTOS || PHOTOS;
+  list.forEach((src, idx) => {
     const img = new Image();
-    img.src = src;
     img.alt = "Me & SP";
-    img.loading = "lazy";
     img.style.setProperty("--tilt", `${(idx % 2 === 0 ? -1 : 1) * (2 + idx)}deg`);
-    // Only show photos that actually load, so missing files don't leave broken icons.
+    img.style.setProperty("--pd", `${0.5 + idx * 0.12}s`);
+    // Only show photos that actually load, so missing files never leave broken icons.
+    // Attach listeners BEFORE setting src — cached/data-URI images can fire load
+    // synchronously, which would otherwise be missed and the photo never appears.
     img.addEventListener("load", () => gallery.appendChild(img));
     img.addEventListener("error", () => {});
+    img.src = src;
   });
 }
 
@@ -108,17 +178,17 @@ function spawnHeart() {
   heart.textContent = HEART_CHARS[Math.floor(Math.random() * HEART_CHARS.length)];
   heart.style.left = Math.random() * 100 + "vw";
   heart.style.fontSize = (1 + Math.random() * 1.8).toFixed(2) + "rem";
-  const duration = 4 + Math.random() * 4;
+  const duration = 4.5 + Math.random() * 4;
   heart.style.animationDuration = duration + "s";
-  heart.style.setProperty("--drift", (Math.random() * 120 - 60).toFixed(0) + "px");
+  heart.style.setProperty("--drift", (Math.random() * 140 - 70).toFixed(0) + "px");
   heartsLayer.appendChild(heart);
   setTimeout(() => heart.remove(), duration * 1000);
 }
 
 function startHearts() {
-  if (heartTimer) return;
-  for (let i = 0; i < 12; i++) setTimeout(spawnHeart, i * 120);
-  heartTimer = setInterval(spawnHeart, 350);
+  if (heartTimer || reduceMotion) return;
+  for (let i = 0; i < 14; i++) setTimeout(spawnHeart, i * 110);
+  heartTimer = setInterval(spawnHeart, 320);
 }
 
 // ====== BOOT ======

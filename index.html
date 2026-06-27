@@ -7,19 +7,26 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Ambient drifting glow behind everything -->
+  <div class="ambient" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
+
   <!-- Screen 1: Typewriter intro -->
   <section id="screen-intro" class="screen is-active">
     <div class="stage">
       <h1 class="typewriter"><span id="typed"></span><span class="caret" aria-hidden="true"></span></h1>
-      <button id="continue-btn" class="btn btn-primary continue-hidden">Yes? 👀</button>
+      <button id="continue-btn" class="btn btn-primary">Yes? 👀</button>
     </div>
   </section>
 
   <!-- Screen 2: The question -->
   <section id="screen-question" class="screen">
     <div class="stage">
-      <h1 class="question-title">Will you be my girlfriend?</h1>
-      <div class="buttons">
+      <h1 class="question-title reveal" style="--d:0.05s">Will you be my girlfriend?</h1>
+      <div class="buttons reveal" style="--d:0.35s">
         <button id="yes-btn" class="btn btn-primary">Yes 💖</button>
         <button id="no-btn" class="btn btn-ghost">No</button>
       </div>
@@ -30,12 +37,12 @@
   <section id="screen-celebrate" class="screen">
     <div class="hearts" id="hearts" aria-hidden="true"></div>
     <div class="stage celebrate-stage">
-      <h1 class="celebrate-title">She said YES! 🎉</h1>
-      <p class="celebrate-subtitle">You just made me the happiest person alive 💕</p>
-      <div class="gallery" id="gallery">
+      <h1 class="celebrate-title" style="--d:0.05s">She said YES! 🎉</h1>
+      <p class="celebrate-subtitle" style="--d:0.2s">You just made me the happiest person alive 💕</p>
+      <div class="gallery" id="gallery" style="--d:0.35s">
         <!-- Photos get injected here from script.js -->
       </div>
-      <p class="celebrate-footer">Me &amp; you, SP. Always. 🤍</p>
+      <p class="celebrate-footer" style="--d:0.5s">Me &amp; you, SP. Always. 🤍</p>
     </div>
   </section>
 
