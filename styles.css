@@ -254,6 +254,33 @@ body {
   50%      { transform: translateY(-12px) rotate(1.5deg); }
 }
 
+/* ---------- Continuous floating hearts (She said yes) ---------- */
+
+.hearts {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.heart {
+  position: absolute;
+  bottom: -6%;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0;
+  animation: heartRise linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes heartRise {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  12%  { opacity: var(--o, 0.8); }
+  88%  { opacity: var(--o, 0.8); }
+  100% { transform: translate(var(--dx, 4vw), -115vh) rotate(22deg); opacity: 0; }
+}
+
 /* ---------- Confetti canvas ---------- */
 
 .confetti {
@@ -294,6 +321,8 @@ body {
   .reveal, .stagger, .pop, .show { opacity: 1; transform: none; transition: none; }
   .petals { display: none; }
   .petal { animation: none; }
+  .hearts { display: none; }
+  .heart { animation: none; }
   .yes-btn, .no-btn, .ghost-btn { transition: none; }
   .mem-frame { animation: none; }
   .mem-slot {

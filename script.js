@@ -230,8 +230,34 @@ if (yesBtn) {
   yesBtn.addEventListener("click", () => {
     goToAct("celebrate");
     animateMemoriesIn();
+    spawnHearts();
     burstConfetti();
   });
+}
+
+/* ---------------------------------------------------------
+   Continuous floating hearts on the celebration screen
+   --------------------------------------------------------- */
+function spawnHearts(count = 16) {
+  if (prefersReducedMotion) return;
+  const field = document.getElementById("hearts");
+  if (!field) return;
+  field.innerHTML = "";
+
+  const palette = ["#c4a6ff", "#b89bff", "#9a78ff", "#e7dbff"];
+  for (let i = 0; i < count; i++) {
+    const h = document.createElement("span");
+    h.className = "heart";
+    h.textContent = "♥";
+    h.style.left = `${Math.random() * 100}%`;
+    h.style.fontSize = `${12 + Math.random() * 26}px`;
+    h.style.color = palette[Math.floor(Math.random() * palette.length)];
+    h.style.setProperty("--o", (0.45 + Math.random() * 0.45).toFixed(2));
+    h.style.setProperty("--dx", `${(Math.random() * 12 - 6).toFixed(1)}vw`);
+    h.style.animationDuration = `${6 + Math.random() * 7}s`;
+    h.style.animationDelay = `${(-Math.random() * 12).toFixed(1)}s`;
+    field.appendChild(h);
+  }
 }
 
 /* ---------------------------------------------------------

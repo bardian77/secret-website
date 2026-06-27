@@ -16,7 +16,7 @@
   <!-- Hosted fonts via <link> for a no-build static page (display=swap to avoid FOIT) -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <!-- Ambient floating petals (decorative, pointer-events: none) -->
@@ -63,6 +63,8 @@
 
     <!-- ACT 4: she said yes -->
     <section class="act act--yes" id="celebrate" hidden>
+      <!-- Continuous hearts drifting up after she says yes -->
+      <div class="hearts" aria-hidden="true" id="hearts"></div>
       <!-- Floating photos of you two. Add real images via MEMORY_PHOTOS in script.js -->
       <div class="memories" aria-hidden="true" id="memories"></div>
       <p class="eyebrow show">make it official</p>
@@ -75,6 +77,6 @@
   </main>
 
   <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
-  <script src="script.js?v=2" defer></script>
+  <script src="script.js?v=3" defer></script>
 </body>
 </html>
