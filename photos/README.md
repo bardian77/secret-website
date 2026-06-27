@@ -1,23 +1,25 @@
 # photos
 
-Put pictures of you two here, then list them in `script.js`.
+Your original uploads live in this folder (the `IMG_*.jpeg` / `IMG_*.JPG` files).
 
-## Steps
+The site does NOT load those directly. They are large (several MB each), so smaller
+web-optimized copies are generated into `web/` (`web/1.jpg`, `web/2.jpg`, ...) and those
+are what the page uses. This keeps the page fast on a phone.
 
-1. Add image files to this folder named `1.jpg`, `2.jpg`, `3.jpg`, and so on.
-   Use `.jpg`, `.png`, or `.webp`. iPhone `.HEIC` files will NOT show in a browser,
-   so convert them to JPG first (on iPhone: share the photo, choose a JPG-capable
-   app, or take a screenshot of it).
-2. In `script.js`, find `MEMORY_PHOTOS` near the top and uncomment the matching lines:
+## To change which photos show
 
-   ```js
-   const MEMORY_PHOTOS = [
-     "photos/1.jpg",
-     "photos/2.jpg",
-     "photos/3.jpg",
-   ];
+Edit `MEMORY_PHOTOS` near the top of `script.js`. It points at `photos/web/1.jpg` and so on.
+Up to 6 photos drift around the "She said yes." screen (4 on phones).
+
+## To add or replace photos later
+
+1. Add a new `IMG` / `.jpg` here.
+2. Make a web-sized copy in `web/`. On a Mac you can run:
+
+   ```bash
+   sips -s format jpeg -s formatOptions 72 -Z 1000 INPUT.jpg --out web/7.jpg
    ```
 
-3. Save. Up to 5 photos are shown, drifting around the "She said yes." screen.
+3. Add `"photos/web/7.jpg"` to `MEMORY_PHOTOS` in `script.js`.
 
-Until you add photos, the page shows tasteful placeholder frames, so nothing looks broken.
+Use `.jpg` / `.png` / `.webp`. Browsers can't display iPhone `.HEIC` files.

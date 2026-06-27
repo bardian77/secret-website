@@ -31,19 +31,21 @@ seedPetals();
    Use .jpg / .png / .webp (phone HEIC files won't show in a browser).
    --------------------------------------------------------- */
 const MEMORY_PHOTOS = [
-  // "photos/1.jpg",
-  // "photos/2.jpg",
-  // "photos/3.jpg",
-  // "photos/4.jpg",
-  // "photos/5.jpg",
+  "photos/web/1.jpg",
+  "photos/web/2.jpg",
+  "photos/web/3.jpg",
+  "photos/web/4.jpg",
+  "photos/web/5.jpg",
+  "photos/web/6.jpg",
 ];
 
 const MEM_POSITIONS_WIDE = [
-  { left: "6%",  top: "16%", rot: -8 },
-  { left: "78%", top: "12%", rot: 7 },
-  { left: "3%",  top: "58%", rot: 6 },
-  { left: "79%", top: "56%", rot: -7 },
-  { left: "40%", top: "82%", rot: -3 },
+  { left: "5%",  top: "14%", rot: -8 },
+  { left: "80%", top: "11%", rot: 7 },
+  { left: "2%",  top: "49%", rot: 6 },
+  { left: "82%", top: "47%", rot: -7 },
+  { left: "15%", top: "80%", rot: -4 },
+  { left: "67%", top: "81%", rot: 6 },
 ];
 const MEM_POSITIONS_NARROW = [
   { left: "2%",  top: "6%",  rot: -7 },
@@ -205,9 +207,20 @@ function dodge() {
 }
 
 if (noBtn) {
-  // mouseover handles desktop "can't click me"; click handles touch + keyboard
-  noBtn.addEventListener("mouseover", () => { escalate(); dodge(); });
-  noBtn.addEventListener("click", (e) => { e.preventDefault(); escalate(); dodge(); });
+  // Keep it off the keyboard tab order so Enter/Space can't activate it.
+  noBtn.setAttribute("tabindex", "-1");
+
+  // The No button can never actually be clicked: it flees on hover AND on the
+  // first press (before a click can register), and any stray click is cancelled.
+  const flee = (e) => {
+    if (e && e.cancelable) e.preventDefault();
+    escalate();
+    dodge();
+  };
+
+  noBtn.addEventListener("pointerenter", flee); // desktop hover + first touch contact
+  noBtn.addEventListener("pointerdown", flee);  // bail before a click can complete
+  noBtn.addEventListener("click", flee);        // final safety net
 }
 
 /* ---------------------------------------------------------
@@ -239,7 +252,7 @@ function burstConfetti() {
   resize();
   window.addEventListener("resize", resize);
 
-  const colors = ["#e86a86", "#ffb3c4", "#f7ece9", "#ff8fa6"];
+  const colors = ["#c4a6ff", "#9a78ff", "#e7dbff", "#b89bff"];
   const hearts = Array.from({ length: 110 }, () => ({
     x: Math.random() * window.innerWidth,
     y: -20 - Math.random() * window.innerHeight,
