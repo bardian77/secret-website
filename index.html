@@ -3,13 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Secret Website</title>
+  <title>For SP 💌</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="stage">
-    <h1 class="title">It's live.</h1>
-    <p class="subtitle">Tell Claude what to build next — from anywhere.</p>
-  </main>
+  <!-- Screen 1: Typewriter intro -->
+  <section id="screen-intro" class="screen is-active">
+    <div class="stage">
+      <h1 class="typewriter"><span id="typed"></span><span class="caret" aria-hidden="true"></span></h1>
+      <button id="continue-btn" class="btn btn-primary continue-hidden">Yes? 👀</button>
+    </div>
+  </section>
+
+  <!-- Screen 2: The question -->
+  <section id="screen-question" class="screen">
+    <div class="stage">
+      <h1 class="question-title">Will you be my girlfriend?</h1>
+      <div class="buttons">
+        <button id="yes-btn" class="btn btn-primary">Yes 💖</button>
+        <button id="no-btn" class="btn btn-ghost">No</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screen 3: Celebration -->
+  <section id="screen-celebrate" class="screen">
+    <div class="hearts" id="hearts" aria-hidden="true"></div>
+    <div class="stage celebrate-stage">
+      <h1 class="celebrate-title">She said YES! 🎉</h1>
+      <p class="celebrate-subtitle">You just made me the happiest person alive 💕</p>
+      <div class="gallery" id="gallery">
+        <!-- Photos get injected here from script.js -->
+      </div>
+      <p class="celebrate-footer">Me &amp; you, SP. Always. 🤍</p>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
 </body>
 </html>

@@ -1,14 +1,20 @@
-# Secret Website
+# For SP 💌
 
-A plain HTML/CSS site, set up so it can be built and edited remotely from a phone.
+A little site to ask SP a very important question.
 
-## Build it from your phone (away from your laptop)
+## The flow
 
-1. Open **claude.ai/code** in your phone's browser and sign in.
-2. Pick this repository.
-3. Type what you want — e.g. *"add a countdown timer to the homepage"* — and Claude builds it and commits the change.
+1. **Intro** — text types out, typewriter-style: *"Hey SP, I have a question…"*
+2. **The question** — *"Will you be my girlfriend?"* with two buttons:
+   - **Yes** → celebration screen
+   - **No** → runs away to a random spot every time it's clicked (so it can never actually be pressed 😏)
+3. **Celebration** — floating hearts everywhere, plus photos of you and SP.
 
-Your laptop does not need to be on. The code lives on GitHub, so the cloud session and your phone always see the same thing.
+## Adding your photos
+
+Put your pictures in the `images/` folder named `us-1.jpg`, `us-2.jpg`,
+`us-3.jpg` (see `images/README.md`). To use different names or add more,
+edit the `PHOTOS` list at the top of `script.js`.
 
 ## Run it locally
 
