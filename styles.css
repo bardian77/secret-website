@@ -1,42 +1,226 @@
+/* =========================================================
+   For Siya - romantic single-page invite
+   Theme: locked dark plum. One accent: rose. Radius: pill buttons.
+   ========================================================= */
+
 :root {
-  --bg: #0b0b0f;
-  --fg: #f5f5f7;
-  --muted: #8a8a93;
-  --accent: #6c5ce7;
+  --bg-0: #140810;
+  --bg-1: #1d0a17;
+  --bg-2: #260d1d;
+  --text: #f7ece9;
+  --muted: #c29aa3;
+  --accent: #e86a86;
+  --accent-soft: rgba(232, 106, 134, 0.16);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --max: 720px;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
 
 body {
-  min-height: 100vh;
-  background: radial-gradient(circle at 50% 30%, #16161f 0%, var(--bg) 70%);
-  color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100dvh;
+  background:
+    radial-gradient(120% 90% at 50% -10%, var(--bg-2) 0%, var(--bg-1) 45%, var(--bg-0) 100%);
+  color: var(--text);
+  font-family: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Layout ---------- */
+
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
 }
 
-.stage {
-  text-align: center;
-  padding: 2rem;
+.act {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 4rem);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  gap: 1.4rem;
 }
 
-.title {
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  background: linear-gradient(120deg, var(--fg), var(--accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.act[hidden] { display: none; }
+
+.act--question,
+.act--yes { align-items: center; text-align: center; }
+
+/* ---------- Typography ---------- */
+
+.display {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  font-size: clamp(2.6rem, 7vw, 4.6rem);
 }
 
-.subtitle {
-  margin-top: 1rem;
+.display--mid { font-size: clamp(3.4rem, 12vw, 6rem); color: var(--accent); font-style: italic; padding-bottom: 0.1em; }
+.display--big { font-size: clamp(2.9rem, 8vw, 5.2rem); }
+
+.eyebrow {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.lede {
+  font-size: clamp(1.05rem, 2.6vw, 1.35rem);
   color: var(--muted);
-  font-size: clamp(1rem, 3vw, 1.25rem);
+  max-width: 32ch;
+}
+
+/* ---------- Buttons ---------- */
+
+.ghost-btn {
+  margin-top: 0.6rem;
+  padding: 0.85rem 1.9rem;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid rgba(247, 236, 233, 0.28);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease), background 0.25s var(--ease);
+}
+
+.ghost-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
+.ghost-btn:active { transform: scale(0.97); }
+
+.answers {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+}
+
+.yes-btn {
+  padding: 0.9rem 2.6rem;
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #1a0710;
+  background: var(--accent);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 14px 40px rgba(232, 106, 134, 0.32);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  will-change: transform;
+}
+
+.yes-btn:hover { transform: translateY(-2px); }
+.yes-btn:active { transform: scale(0.98); }
+
+.no-btn {
+  padding: 0.9rem 2.2rem;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid rgba(247, 236, 233, 0.22);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+/* When the No button starts dodging it goes absolute-positioned */
+.no-btn.dodging {
+  position: fixed;
+  z-index: 5;
+  margin: 0;
+}
+
+/* ---------- Ambient petals ---------- */
+
+.petals {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.petal {
+  position: absolute;
+  top: -8vh;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 30% 30%, #ffb3c4, var(--accent));
+  border-radius: 80% 0 80% 0;
+  opacity: 0.55;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0%   { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.5; }
+  100% { transform: translateY(110vh) translateX(8vw) rotate(320deg); opacity: 0; }
+}
+
+/* ---------- Confetti canvas ---------- */
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* ---------- Entrance reveals ---------- */
+
+.reveal, .stagger, .pop, .show {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+
+.reveal.in, .stagger.in, .pop.in, .show.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal--d1, .stagger--d1, .pop--d1, .show--d1 { transition-delay: 0.12s; }
+.reveal--d2, .stagger--d2, .show--d2 { transition-delay: 0.26s; }
+.reveal--d3, .stagger--d3 { transition-delay: 0.4s; }
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 768px) {
+  .act { padding: 1.6rem; gap: 1.2rem; }
+  .answers { width: 100%; }
+  .yes-btn, .no-btn { flex: 1 1 auto; text-align: center; }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .stagger, .pop, .show { opacity: 1; transform: none; transition: none; }
+  .petals { display: none; }
+  .petal { animation: none; }
+  .yes-btn, .no-btn, .ghost-btn { transition: none; }
 }

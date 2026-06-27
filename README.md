@@ -1,21 +1,33 @@
-# Secret Website
+# For Siya
 
-A plain HTML/CSS site, set up so it can be built and edited remotely from a phone.
+A small single-page site to ask Siya out. Plain HTML/CSS/JS, no build step.
 
-## Build it from your phone (away from your laptop)
+## What it does
 
-1. Open **claude.ai/code** in your phone's browser and sign in.
-2. Pick this repository.
-3. Type what you want — e.g. *"add a countdown timer to the homepage"* — and Claude builds it and commits the change.
+Four short "acts": a lead-in, a message, the question (with a playful **No** button that
+runs away and a **Yes** that grows), and a celebration with heart confetti.
 
-Your laptop does not need to be on. The code lives on GitHub, so the cloud session and your phone always see the same thing.
+## See it live
+
+Hosted on GitHub Pages: **https://bardian77.github.io/secret-website**
 
 ## Run it locally
 
-Open `index.html` in a browser, or serve the folder:
+Open `index.html` in a browser, or:
 
 ```bash
 python3 -m http.server 8000
 ```
 
 Then visit http://localhost:8000
+
+## Make it more personal (optional)
+
+- **Add real photos of you two:** drop image files in a `photos/` folder and uncomment the
+  `<img>` slots marked `TODO` in `index.html`.
+- **Edit the words:** all the copy lives directly in `index.html`. The final line under
+  "She said yes." is the easiest one to personalize.
+
+## Edit it from your phone
+
+Open **claude.ai/code**, pick the `secret-website` repo, and tell Claude what to change.
