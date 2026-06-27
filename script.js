@@ -23,6 +23,110 @@ function seedPetals(count = 14) {
 seedPetals();
 
 /* ---------------------------------------------------------
+   Floating memories on the "She said yes" screen
+   ----------------------------------------------------------
+   ADD YOUR PHOTOS HERE. Each item is an image URL or a path
+   like "photos/1.jpg". Leave the array empty to show elegant
+   placeholder frames. Use 3 to 5 photos for the best look.
+   Use .jpg / .png / .webp (phone HEIC files won't show in a browser).
+   --------------------------------------------------------- */
+const MEMORY_PHOTOS = [
+  // "photos/1.jpg",
+  // "photos/2.jpg",
+  // "photos/3.jpg",
+  // "photos/4.jpg",
+  // "photos/5.jpg",
+];
+
+const MEM_POSITIONS_WIDE = [
+  { left: "6%",  top: "16%", rot: -8 },
+  { left: "78%", top: "12%", rot: 7 },
+  { left: "3%",  top: "58%", rot: 6 },
+  { left: "79%", top: "56%", rot: -7 },
+  { left: "40%", top: "82%", rot: -3 },
+];
+const MEM_POSITIONS_NARROW = [
+  { left: "2%",  top: "6%",  rot: -7 },
+  { left: "62%", top: "5%",  rot: 6 },
+  { left: "3%",  top: "78%", rot: 5 },
+  { left: "60%", top: "82%", rot: -6 },
+];
+
+function makePlaceholder() {
+  const ph = document.createElement("div");
+  ph.className = "mem-media mem-ph";
+  ph.textContent = "♥"; // heart glyph
+  return ph;
+}
+
+function buildMemories() {
+  const field = document.getElementById("memories");
+  if (!field) return;
+  field.innerHTML = "";
+
+  const narrow = window.innerWidth < 768;
+  const positions = narrow ? MEM_POSITIONS_NARROW : MEM_POSITIONS_WIDE;
+  const count = MEMORY_PHOTOS.length
+    ? Math.min(MEMORY_PHOTOS.length, positions.length)
+    : positions.length;
+
+  for (let i = 0; i < count; i++) {
+    const p = positions[i];
+
+    const slot = document.createElement("div");
+    slot.className = "mem-slot";
+    slot.style.left = p.left;
+    slot.style.top = p.top;
+    slot.style.setProperty("--rot", `${p.rot}deg`);
+    slot.style.transitionDelay = `${i * 0.09}s`;
+
+    const frame = document.createElement("div");
+    frame.className = "mem-frame";
+    frame.style.animationDuration = `${7 + Math.random() * 4}s`;
+    frame.style.animationDelay = `${-Math.random() * 5}s`;
+
+    const src = MEMORY_PHOTOS[i];
+    if (src) {
+      const img = document.createElement("img");
+      img.className = "mem-media";
+      img.src = src;
+      img.alt = "";
+      img.loading = "lazy";
+      // If a photo fails to load, fall back to the placeholder frame.
+      img.addEventListener("error", () => img.replaceWith(makePlaceholder()));
+      frame.appendChild(img);
+    } else {
+      frame.appendChild(makePlaceholder());
+    }
+
+    slot.appendChild(frame);
+    field.appendChild(slot);
+  }
+
+  // Reduced motion: skip the entrance animation, show them right away.
+  if (prefersReducedMotion) field.classList.add("lit");
+}
+
+function animateMemoriesIn() {
+  const field = document.getElementById("memories");
+  if (field) requestAnimationFrame(() => field.classList.add("lit"));
+}
+
+buildMemories();
+
+// Rebuild only when crossing the mobile breakpoint (handles rotate / resize).
+let memWasNarrow = window.innerWidth < 768;
+window.addEventListener("resize", () => {
+  const nowNarrow = window.innerWidth < 768;
+  if (nowNarrow === memWasNarrow) return;
+  memWasNarrow = nowNarrow;
+  const field = document.getElementById("memories");
+  const wasLit = field ? field.classList.contains("lit") : false;
+  buildMemories();
+  if (wasLit) animateMemoriesIn();
+});
+
+/* ---------------------------------------------------------
    Entrance reveals for whichever act is currently visible
    --------------------------------------------------------- */
 function revealAct(section) {
@@ -112,6 +216,7 @@ if (noBtn) {
 if (yesBtn) {
   yesBtn.addEventListener("click", () => {
     goToAct("celebrate");
+    animateMemoriesIn();
     burstConfetti();
   });
 }

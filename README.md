@@ -23,8 +23,9 @@ Then visit http://localhost:8000
 
 ## Make it more personal (optional)
 
-- **Add real photos of you two:** drop image files in a `photos/` folder and uncomment the
-  `<img>` slots marked `TODO` in `index.html`.
+- **Add photos of you two (they float around the "She said yes." screen):** put image files
+  in the `photos/` folder and list them in `MEMORY_PHOTOS` at the top of `script.js`.
+  See `photos/README.md` for the exact steps.
 - **Edit the words:** all the copy lives directly in `index.html`. The final line under
   "She said yes." is the easiest one to personalize.
 
