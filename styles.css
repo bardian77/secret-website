@@ -145,14 +145,10 @@ body {
   border: 1px solid rgba(241, 236, 251, 0.22);
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
-}
-
-/* When the No button starts dodging it goes absolute-positioned */
-.no-btn.dodging {
-  position: fixed;
+  position: relative;
   z-index: 5;
-  margin: 0;
+  will-change: transform;
+  transition: transform 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
 
 /* ---------- Ambient petals ---------- */

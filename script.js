@@ -192,35 +192,48 @@ function escalate() {
   yesBtn.style.transform = `scale(${yesScale})`;
 }
 
+// Accumulated translation + the time of the last real press on "No".
+let noTx = 0;
+let noTy = 0;
+let lastNoPress = 0;
+
 function dodge() {
   if (prefersReducedMotion) return; // keep it accessible: no jumping
-  const pad = 16;
-  const w = noBtn.offsetWidth;
-  const h = noBtn.offsetHeight;
-  const maxX = window.innerWidth - w - pad;
-  const maxY = window.innerHeight - h - pad;
-  const x = Math.max(pad, Math.floor(Math.random() * maxX));
-  const y = Math.max(pad, Math.floor(Math.random() * maxY));
-  noBtn.classList.add("dodging");
-  noBtn.style.left = `${x}px`;
-  noBtn.style.top = `${y}px`;
+  const pad = 14;
+  const rect = noBtn.getBoundingClientRect();
+  const maxX = Math.max(1, window.innerWidth - rect.width - pad * 2);
+  const maxY = Math.max(1, window.innerHeight - rect.height - pad * 2);
+  const targetX = pad + Math.random() * maxX;
+  const targetY = pad + Math.random() * maxY;
+  // Move with a transform (not position:fixed) so the button KEEPS its slot in
+  // the layout. On touch this stops the Yes button from reflowing under the
+  // finger, which was sending taps straight to the celebration screen.
+  noTx += targetX - rect.left;
+  noTy += targetY - rect.top;
+  noBtn.style.transform = `translate(${noTx}px, ${noTy}px)`;
 }
 
 if (noBtn) {
   // Keep it off the keyboard tab order so Enter/Space can't activate it.
   noBtn.setAttribute("tabindex", "-1");
 
-  // The No button can never actually be clicked: it flees on hover AND on the
-  // first press (before a click can register), and any stray click is cancelled.
-  const flee = (e) => {
+  // Desktop: flee the moment the cursor arrives.
+  const fleeHover = () => { escalate(); dodge(); };
+
+  // A real press (touch or click): cancel the event so no click lands, remember
+  // when it happened so a stray tap can't fall through to Yes, then flee.
+  const fleePress = (e) => {
     if (e && e.cancelable) e.preventDefault();
+    lastNoPress = Date.now();
     escalate();
     dodge();
   };
 
-  noBtn.addEventListener("pointerenter", flee); // desktop hover + first touch contact
-  noBtn.addEventListener("pointerdown", flee);  // bail before a click can complete
-  noBtn.addEventListener("click", flee);        // final safety net
+  noBtn.addEventListener("pointerenter", fleeHover);
+  noBtn.addEventListener("pointerdown", fleePress);
+  noBtn.addEventListener("click", fleePress);
+  // iOS fires a synthesized click after touchend; cancel it at the source.
+  noBtn.addEventListener("touchstart", fleePress, { passive: false });
 }
 
 /* ---------------------------------------------------------
@@ -228,6 +241,8 @@ if (noBtn) {
    --------------------------------------------------------- */
 if (yesBtn) {
   yesBtn.addEventListener("click", () => {
+    // Ignore a click that is really the tail end of a "No" tap fleeing away.
+    if (Date.now() - lastNoPress < 600) return;
     goToAct("celebrate");
     animateMemoriesIn();
     spawnHearts();
